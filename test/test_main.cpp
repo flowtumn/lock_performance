@@ -149,16 +149,17 @@ namespace flowTumn {
 	//スコアを計測。
 	template <typename Lock>
 	uint64_t score() {
+		const auto core = std::max <uint32_t> (std::thread::hardware_concurrency() >> 1, 1);
 		return queue_tester <uint64_t, Lock>(
 			[] {
 				//好きな値で詰める。重要なのは呼ばれた回数。
 				return 1234;
 			},
-			std::thread::hardware_concurrency(),
+			core,
 			[](uint64_t) {
 				//popしたデータを受けても何もしない。重要なのは呼ばれた回数。
 			},
-			std::thread::hardware_concurrency(),
+			core,
 			std::chrono::seconds(5)
 		);
 	}
