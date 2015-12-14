@@ -1,4 +1,6 @@
-﻿#include <atomic>
+﻿#include <algorithm>
+#include <cassert>
+#include <atomic>
 #include <mutex>
 #include <iterator>
 #include <iostream>
@@ -68,8 +70,8 @@ namespace flowTumn {
 		std::chrono::milliseconds timeout) {
 		using queue_type = flowTumn::concurrent_queue <int64_t, Lock>;
 
-		auto queue = queue_type{};
-		auto counter = std::atomic <uint64_t> {0};
+		queue_type queue{};
+		std::atomic <uint64_t> counter{0};
 		std::atomic <bool> g{ false };
 		std::vector <std::thread> thr;
 
@@ -109,9 +111,9 @@ namespace flowTumn {
 	//queueがthread safeなのかを検証します。
 	template <typename L>
 	bool checkQueue() {
-		auto v1 = std::atomic <int64_t> {0};
-		auto v2 = std::atomic <int64_t> {0};
-		auto result = std::atomic <bool> {true};
+		std::atomic <int64_t> v1{0};
+		std::atomic <int64_t> v2{0};
+		std::atomic <bool> result{true};
 
 		//cpuのコア数分詰める処理を追加し、popしたデータを検証するのは一つが担う。
 		queue_tester <int64_t, L>(
@@ -181,7 +183,8 @@ namespace flowTumn {
 	std::cout << "TargetLock => " << ""#lock""  << std::endl; \
 	if (checkQueue<lock>()) { \
 		std::cout << "\t" << "checkQueue: Success." << std::endl; \
-		std::cout << "\t" << "Score(Avg): " << avg(score<lock>, count, [](decltype(score<lock>()) score) { std::cout << "\t\t" << "Score: " << score << std::endl; }) << std::endl; \
+		auto scoreAvg = avg(score<lock>, count, [](decltype(score<lock>()) score) { std::cout << "\t\t" << "Score: " << score << std::endl; }); \
+		std::cout << "\t" << "Score(Avg): " << scoreAvg << std::endl; \
 	} else {  \
 		std::cout << "\t" << "checkQueue: Failed." << std::endl; \
 	} \
