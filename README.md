@@ -12,3 +12,5 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ../
 $ cmake --build .
 $ ctest -V
 ```
+
+[![Build Status](https://travis-ci.org/flowtumn/lock_performance.svg?branch=master) [![Build Status](https://travis-ci.org/flowtumn/lock_performance.svg?branch=develop)
